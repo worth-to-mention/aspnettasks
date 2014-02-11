@@ -1,0 +1,140 @@
+﻿* {
+margin: 0; 
+padding: 0;
+border: 0;
+}
+
+body {
+padding: 2% 0 0;
+background: #fff;
+color: #333;
+font-family: “Comic Sans MS”, Verdana, Arial, Helvetica, sans-serif;
+}
+
+#cont {
+width: 800px;
+margin: 0 auto;
+}
+
+#header 
+{
+border: 1px solid black;
+width: 800px;
+height: 50px;
+}
+
+
+#text {
+width: 790px;
+position: relative;
+top: -35px;
+}
+
+.c1 {
+	height:1px;
+	margin:0 6px;
+	border-top:1px dashed #28415b;
+}
+.c2 {
+	border:1px dashed #28415b;
+	border-width:0 1px;
+	margin:0 4px;
+	height:1px;
+}
+.c3 {
+	border:1px dashed #28415b;
+	border-width:0 1px;
+	margin:0 3px;
+	height:1px;
+}
+.c4 {
+	border:1px dashed #28415b;
+	border-width:0 1px;
+	margin:0 2px;
+	height:1px;
+}
+.c5 {
+	border:1px dashed #28415b;
+	border-width:0 1px;
+	margin:0 1px;
+	height:2px;
+}
+.c1, .c2, .c3, .c4, .c5 {
+	overflow:hidden;
+}
+.cornerText {
+	border:1px dashed #28415b;
+	border-width:0 1px;
+	padding:10px;
+}
+
+
+.tableHeader
+{
+    background-color:Orange;
+    border-bottom: 1px solid grey;
+}
+.row1
+{
+background-color:Fuchsia;
+}
+.row2
+{
+background-color:Aqua;
+}
+.td
+{
+    
+    border-bottom: 1px solid grey;
+    border-top: 1px solid grey;
+    border-left: 1px dashed grey;    
+    border-right: 1px dashed grey;
+}
+
+
+
+#footer {
+width: 790px;
+position:relative;
+top:-30px;
+} 
+.fc1 {
+	height:1px;
+	margin:0 6px;
+	background-color: orange;
+}
+.fc2 {
+	border:1px solid orange;
+	border-width:0 2px;
+	margin:0 4px;
+	height:1px;
+}
+.fc3 {
+	border:1px solid orange;
+	border-width:0 1px;
+	margin:0 3px;
+	height:1px;
+}
+.fc4 {
+	border:1px solid orange;
+	border-width:0 1px;
+	margin:0 2px;
+	height:1px;
+}
+.fc5 {
+	border:1px solid orange;
+	border-width:0 1px;
+	margin:0 1px;
+	height:2px;
+}
+.fc1, .fc2, .fc3, .fc4, .fc5 {
+	overflow:hidden;
+}
+
+.fCornerText {
+	border:1px solid orange;
+	border-width:0 1px;
+	padding:10px;	
+	font-size : 60%;
+	text-align:center;
+}
