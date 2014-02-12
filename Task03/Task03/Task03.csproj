@@ -90,7 +90,7 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="..\CaptchaControl\Maleficus.CustomControls.csproj">
+    <ProjectReference Include="..\Maleficus.CustomControls\Maleficus.CustomControls.csproj">
       <Project>{f9018f87-3af1-435d-baf5-8e3350789e05}</Project>
       <Name>Maleficus.CustomControls</Name>
     </ProjectReference>
