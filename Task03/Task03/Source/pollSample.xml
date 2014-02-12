@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Poll>
+  <Options>
+    <Option>
+      <Title>First</Title>
+      <Votes></Votes>
+    </Option>
+    <Option>
+      <Title>Second</Title>
+      <Votes></Votes>
+    </Option>
+    <Option>
+      <Title>Third</Title>
+      <Votes></Votes>
+    </Option>
+  </Options>  
+</Poll>

@@ -1,0 +1,16 @@
+﻿*{
+    margin: 0;
+    padding: 0;
+}
+
+div.captcha{
+    overflow: hidden;
+    text-align: center;
+    width: 200px;
+    
+}
+div.captcha img{
+}
+div.captcha input{
+    width: 200px;
+} 
