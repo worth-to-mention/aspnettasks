@@ -7,10 +7,55 @@ div.captcha{
     overflow: hidden;
     text-align: center;
     width: 200px;
+    margin-top: 20px;
     
 }
-div.captcha img{
+div.captcha .cpathca-image{
 }
-div.captcha input{
-    width: 200px;
+div.captcha .captcha-text{   
 } 
+.captcha-text input{
+    width: 100%;
+}
+
+div.poll{
+    width: 200px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px;
+    background: #666;
+    color: #d1d1d1;
+    overflow: hidden;
+}
+div.poll .poll-vote{   
+    margin: 5px 0;
+    border-bottom: 1px solid #ccc;
+}
+div.poll .poll-vote:last-child{
+    border-bottom: 0;
+}
+.poll-vote input[type=radio]{
+    margin-right: 10px;
+}
+div.poll > input[type=submit]{
+    margin-top: 10px;
+    clear: both;
+    width: 100%;
+}
+div.poll > .poll-results {
+    overflow: hidden;
+}
+.poll-results > .poll-result{
+    overflow: hidden;
+    clear: both;
+    border-bottom: 1px solid #ccc;
+}
+.poll-results > .poll-result:last-child{
+    border: 0;
+}
+.poll-results .poll-option-title{
+    float:left;
+}
+.poll-results .poll-option-votes{
+    float:right;
+}

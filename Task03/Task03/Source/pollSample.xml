@@ -1,17 +1,25 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Poll>
   <Options>
     <Option>
       <Title>First</Title>
-      <Votes></Votes>
+      <Votes>6</Votes>
     </Option>
     <Option>
       <Title>Second</Title>
-      <Votes></Votes>
+      <Votes>5</Votes>
     </Option>
     <Option>
       <Title>Third</Title>
-      <Votes></Votes>
+      <Votes>2</Votes>
     </Option>
-  </Options>  
+    <Option>
+      <Title>Another option</Title>
+      <Votes>2</Votes>
+    </Option>
+    <Option>
+      <Title>Last</Title>
+      <Votes>14</Votes>
+    </Option>
+  </Options>
 </Poll>

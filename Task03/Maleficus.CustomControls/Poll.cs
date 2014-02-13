@@ -63,8 +63,13 @@ namespace Maleficus.CustomControls
         {
             base.OnInit(e);
 
+            EnsureChildControls();
+
             if (!File.Exists(SourceFile))
+            {
+                Page.Response.Write("No data to display.");
                 return;
+            }
 
             XElement xml = XElement.Load(SourceFile);
             var query = from option in xml.Element("Options").Elements("Option")
@@ -82,13 +87,31 @@ namespace Maleficus.CustomControls
             }
         }
 
+        protected override void LoadViewState(object savedState)
+        {
+            if (savedState != null)
+            {
+                object[] viewState = savedState as object[];
+                if (viewState == null) return;
+                if (viewState[1] != null)
+                    ViewState["Voted"] = viewState[0];
+
+            }
+        }
+        protected override object SaveViewState()
+        {
+            object[] states = new object[1];
+            states[0] = Voted;
+            return states;
+        }
+
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
 
             if (Page.IsPostBack)
             {
-                if (Page.Request.Params["pollSubmit"] != null && Page.Request.Params["poll"] != null)
+                if (Page.Request.Params["pollSubmit"] != null && Page.Request.Params["poll"] != null && !Voted)
                 {
                     if (captchaControl.CheckValidity())
                     {
@@ -100,6 +123,21 @@ namespace Maleficus.CustomControls
                                 .FirstOrDefault();
                             ++options[selectedKey];
                             Voted = true;
+                            try
+                            {                                
+                                XElement xml = XElement.Load(SourceFile);
+                                XElement option = xml.Element("Options").Elements("Option").Where(el => el.Element("Title").Value == selectedKey).FirstOrDefault();
+                                option.Element("Votes").Value = options[selectedKey].ToString();
+                                xml.Save(SourceFile);
+                            }
+                            catch (Exception)
+                            {
+                                Voted = false;
+                                Page.Response.Write("Your vote cannot be accepted at this time. Try again later.");
+                            }
+                                        
+
+                            
                         }
                     }
                     else
@@ -110,11 +148,12 @@ namespace Maleficus.CustomControls
                 }
                 
             }
-            
         }
 
         protected override void RenderContents(HtmlTextWriter writer)
         {
+            writer.Write("<div class=\"poll\">");
+
             if (!Voted)
             {
                 foreach (var pair in options)
@@ -127,25 +166,27 @@ namespace Maleficus.CustomControls
                         .Append(">")
                         .Append(pair.Key.ToString())
                         .Append("</input>");
-                    writer.Write(sb.ToString());
+                    writer.Write("<div class=\"poll-vote\">{0}</div>", sb.ToString());
                 }
                 captchaControl.RenderControl(writer);
                 writer.Write("<input name=\"pollSubmit\" type=\"submit\" value=\"Send\" runat=\"server\" />");
             }
             else
             {
+                StringBuilder sb = new StringBuilder();
+                sb.Append("<div class=\"poll-results\"> ");
                 foreach (var pair in options)
                 {
-                    StringBuilder sb = new StringBuilder();
-                    sb.Append("<div class=\"poll-results\"> ")
-                        .Append("<div class=\"poll-result\">")
+                    sb.Append("<div class=\"poll-result\">")
                         .AppendFormat("<div class=\"poll-option-title\">{0}</div>", pair.Key)
                         .AppendFormat("<div class=\"poll-option-votes\">{0}</div>", pair.Value.ToString())
-                        .Append("</div>")
                         .Append("</div>");
-                    writer.Write(sb.ToString());
                 }
+                sb.Append("</div>");
+                writer.Write(sb.ToString());
             }
+
+            writer.WriteEndTag("div");
             
         }
 

@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Poll>
+  <Options>
+    <Option>
+      <Title>Option1</Title>
+      <Votes></Votes>
+    </Option>
+    <Option>
+      <Title>Option2</Title>
+      <Votes></Votes>
+    </Option>
+    <Option>
+      <Title>Option3</Title>
+      <Votes></Votes>
+    </Option>
+
+  </Options>
+</Poll>

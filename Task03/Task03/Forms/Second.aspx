@@ -2,5 +2,6 @@
 
 <asp:Content ContentPlaceHolderID="PollPlaceHolder" ID="Poll" runat="server">
     <%@ MasterType VirtualPath="~/Forms/MasterPage.Master"%>
-    <mcc:Poll SourceFile="/Source/pollSample.xml" runat="server" />
+    <mcc:Poll SourceFile="/Source/pollSample2.xml" runat="server" />
 </asp:Content>
+

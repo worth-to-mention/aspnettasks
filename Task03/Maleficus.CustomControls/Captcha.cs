@@ -11,9 +11,9 @@ using System.Web.Security;
 
 namespace Maleficus.CustomControls
 {
-    public class Captcha : WebControl
+    public class Captcha : CompositeControl
     {
-        public Captcha() : base(HtmlTextWriterTag.Div) { }
+        public Captcha() { }
 
         #region Child controls
 
@@ -124,11 +124,21 @@ namespace Maleficus.CustomControls
             captchaImage.ImageUrl = String.Format("data:image/png;base64,{0}", Convert.ToBase64String(image));
             captchaTextBox.Text = String.Empty;
         }
-        protected override void RenderContents(HtmlTextWriter writer)
-        {
 
+        protected override void Render(HtmlTextWriter writer)
+        {
+            writer.Write("<div class=\"captcha\">");
+
+
+            writer.Write("<div class=\"captcha-image\">");
+            captchaImage.RenderControl(writer);
+            writer.WriteEndTag("div");
+
+            writer.Write("<div class=\"captcha-text\">");
+            captchaTextBox.RenderControl(writer);
+            writer.WriteEndTag("div");
             
-            base.RenderContents(writer);
+            writer.WriteEndTag("div");
         }
 
 
