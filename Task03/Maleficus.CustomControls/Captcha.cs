@@ -29,12 +29,12 @@ namespace Maleficus.CustomControls
         {
             get
             {
-                string tmp = ViewState["DefinedKey"] as String;
+                string tmp = Page.Session["DefinedKey"] as String;
                 return tmp == null ? String.Empty : tmp;
             }
             set
             {
-                ViewState["DefinedKey"] = value;
+                Page.Session["DefinedKey"] = value;
             }
         }
         public string UserKey

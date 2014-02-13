@@ -3,7 +3,7 @@
   <Options>
     <Option>
       <Title>First</Title>
-      <Votes>6</Votes>
+      <Votes>7</Votes>
     </Option>
     <Option>
       <Title>Second</Title>
@@ -15,7 +15,7 @@
     </Option>
     <Option>
       <Title>Another option</Title>
-      <Votes>3</Votes>
+      <Votes>4</Votes>
     </Option>
     <Option>
       <Title>Last</Title>
