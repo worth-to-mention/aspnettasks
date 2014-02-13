@@ -27,12 +27,12 @@ namespace Maleficus.CustomControls
         {
             get
             {
-                var tmp = ViewState["Voted"];
+                var tmp = Page.Session["Voted"];
                 return tmp == null ? false : (bool)tmp;
             }
             set
             {
-                ViewState["Voted"] = value;
+                Page.Session["Voted"] = value;
             }
         }
 
@@ -87,23 +87,6 @@ namespace Maleficus.CustomControls
             }
         }
 
-        protected override void LoadViewState(object savedState)
-        {
-            if (savedState != null)
-            {
-                object[] viewState = savedState as object[];
-                if (viewState == null) return;
-                if (viewState[1] != null)
-                    ViewState["Voted"] = viewState[0];
-
-            }
-        }
-        protected override object SaveViewState()
-        {
-            object[] states = new object[1];
-            states[0] = Voted;
-            return states;
-        }
 
         protected override void OnLoad(EventArgs e)
         {
