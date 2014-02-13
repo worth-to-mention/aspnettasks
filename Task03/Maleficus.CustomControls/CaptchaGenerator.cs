@@ -8,8 +8,20 @@ using System.Drawing.Imaging;
 
 namespace Maleficus.CustomControls
 {
+    /// <summary>
+    /// Helper class for captcha images generation.
+    /// </summary>
     public static class CaptchaGenerator
     {
+        /// <summary>
+        /// Generates captcha image.
+        /// </summary>
+        /// <param name="width">Width of image.</param>
+        /// <param name="height">Height of image.</param>
+        /// <param name="imageFormat">Format of image.</param>
+        /// <param name="captchaText">Captcha text.</param>
+        /// <param name="captchaKeyGenerator">Captcha text generator. May be null. In this case default generator is used.</param>
+        /// <returns>Stream with captcha image.</returns>
         public static MemoryStream Generate(int width, int height, ImageFormat imageFormat, out string captchaText, Func<string> captchaKeyGenerator)
         {
             MemoryStream buffer = new MemoryStream(width * height * 4);

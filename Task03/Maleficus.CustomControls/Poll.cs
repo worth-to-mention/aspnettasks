@@ -12,7 +12,10 @@ using System.Xml.Linq;
 
 namespace Maleficus.CustomControls
 {
-    public class Poll : CompositeControl, IPostBackDataHandler
+    /// <summary>
+    /// Poll control.
+    /// </summary>
+    public class Poll : CompositeControl
     {
         private readonly Dictionary<string, int> options;
 
@@ -37,6 +40,10 @@ namespace Maleficus.CustomControls
         }
 
         private string sourceFile;
+        /// <summary>
+        /// Gets or sets xml source file for a poll.
+        /// File path mast be virtual server path.
+        /// </summary>
         public string SourceFile
         {
             get { return sourceFile; }
@@ -118,18 +125,13 @@ namespace Maleficus.CustomControls
                                 Voted = false;
                                 Page.Response.Write("Your vote cannot be accepted at this time. Try again later.");
                             }
-                                        
-
-                            
                         }
                     }
                     else
                     {
                         Page.Response.Write("Captcha validation failed. Try again.");
                     }
-                    
                 }
-                
             }
         }
 
@@ -173,19 +175,5 @@ namespace Maleficus.CustomControls
             
         }
 
-
-      
-
-        public bool LoadPostData(string postDataKey, System.Collections.Specialized.NameValueCollection postCollection)
-        {
-            var postData = postCollection[postDataKey];
-            
-            return true;
-        }
-
-        public void RaisePostDataChangedEvent()
-        {
-            
-        }
     }
 }
