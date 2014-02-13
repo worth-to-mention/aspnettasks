@@ -11,6 +11,9 @@ using System.Web.Security;
 
 namespace Maleficus.CustomControls
 {
+    /// <summary>
+    /// Captcha control.
+    /// </summary>
     public class Captcha : CompositeControl
     {
         public Captcha() { }
@@ -22,10 +25,7 @@ namespace Maleficus.CustomControls
 
         #endregion
 
-
-        #region Control properties
-
-        public string DefinedKey
+        private string DefinedKey
         {
             get
             {
@@ -37,7 +37,7 @@ namespace Maleficus.CustomControls
                 Page.Session["DefinedKey"] = value;
             }
         }
-        public string UserKey
+        private string UserKey
         {
             get
             {
@@ -46,6 +46,10 @@ namespace Maleficus.CustomControls
             }
         }
 
+        #region Control properties
+        /// <summary>
+        /// Gets or sets width of captcha image.
+        /// </summary>
         public int ImageWidth
         {
             get
@@ -60,6 +64,9 @@ namespace Maleficus.CustomControls
                 captchaImage.Width = value;
             }
         }
+        /// <summary>
+        /// Gets or sets height of captcha image.
+        /// </summary>
         public int ImageHeight
         {
             get
@@ -76,7 +83,10 @@ namespace Maleficus.CustomControls
         }
 
         #endregion
-
+        /// <summary>
+        /// Checks whether user entered right captcha text or not.
+        /// </summary>
+        /// <returns>True if user entered text equals captcha text.</returns>
         public bool CheckValidity()
         {
             return String.Equals(DefinedKey.ToUpper(), UserKey.ToUpper(), StringComparison.Ordinal);
