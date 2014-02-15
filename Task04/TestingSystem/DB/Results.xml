@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Results>
+  <Result passed="no">
+    <User>user</User>
+    <TestId>0</TestId>
+    <QuestionId>0</QuestionId>
+  </Result>
+  <Result passed="no">
+    <User>user</User>
+    <TestId>0</TestId>
+    <QuestionId>1</QuestionId>
+  </Result>
+  <Result passed="yes">
+    <User>user</User>
+    <TestId>0</TestId>
+    <QuestionId>2</QuestionId>
+  </Result>
+</Results>

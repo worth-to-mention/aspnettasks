@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Tests>
+  <Test id="0">
+    <Title>Informatics</Title>
+    <Questions>
+      <Question id="0" type="Radio">
+        <Text>
+          Consider the following recursive function,&lt;br/&gt;
+          &lt;code&gt;
+          int Fun(int n)&lt;br/&gt;
+          {&lt;br/&gt;
+          &amp;nbsp;if (n == 4)&lt;br/&gt;
+          &amp;nbsp;&amp;nbsp;return 2;&lt;br/&gt;
+          &amp;nbsp;else&lt;br/&gt;
+          &amp;nbsp;&amp;nbsp;return 2 * Fun(n + 1);&lt;br/&gt;
+          }&lt;br/&gt;
+          &lt;/code&gt;
+          What is the value returned by the function call &lt;code&gt;Fun(2)&lt;/code&gt; ?
+        </Text>
+        <Options>
+          <Option id="0">2</Option>
+          <Option id="1">4</Option>
+          <Option id="2" isanswer="true">8</Option>
+          <Option id="3">16</Option>
+          <Option id="4">64</Option>
+        </Options>
+      </Question>
+      <Question id="1" type="Select">
+        <Text>Which of the following statements are true?</Text>
+        <Options>
+          <Option id="0">Option 1</Option>
+          <Option id="1" isanswer="true">Option 2</Option>
+          <Option id="2">Option 3</Option>
+          <Option id="3" isanswer="true">Option 4</Option>
+        </Options>
+      </Question>
+      <Question id="2" type="Text">
+        <Text>What is the value of the equation &lt;code&gt; (101011 ^ 11) >> 3 &lt;/code&gt; in the decimal numeral system?</Text>
+        <Answer>4</Answer>
+      </Question>
+    </Questions>
+  </Test>
+</Tests>
