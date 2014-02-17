@@ -102,7 +102,7 @@ namespace TestingSystem
 
         private void ShowResults()
         {
-            //holy godness...
+            // holy goddess...
             var query =
                 from test in tests.Root.Elements(tn + "Test")
                 from result in results.Root.Elements(rn + "Result")
@@ -122,7 +122,7 @@ namespace TestingSystem
                         .Where(el => el.Attribute("id").Value == testDataByTestId.Key)
                         .First().Element(tn + "Title").Value,
                     UserResults =
-                        from user_count_passed in (   
+                        from user_passed_count in (   
                             from res in testDataByTestId
                             group res by res.User into g
                             select new
@@ -131,7 +131,7 @@ namespace TestingSystem
                                 Count = g.Where(el => el.Passed).Count()
                             }
                         )
-                        group user_count_passed by user_count_passed.Count into g
+                        group user_passed_count by user_passed_count.Count into g
                         select new
                         {
                             PassedValue = g.Key,
