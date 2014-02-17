@@ -9,14 +9,17 @@ using System.Web.UI.WebControls;
 
 namespace TestQuestionControls
 {
+    /// <summary>
+    /// Base class for test questions. Contains only title
+    /// of a question.
+    /// </summary>
     public abstract class TestQuestion : WebControl, INamingContainer
     {
         private Label titleLabel; 
 
-        public TestQuestion()
-        {
-        }
-        
+        /// <summary>
+        /// Get or sets question id.
+        /// </summary>
         public int QuestionId { get; set; }
 
         #region Control attributes
@@ -41,6 +44,11 @@ namespace TestQuestionControls
 
         #endregion
 
+        /// <summary>
+        /// Checks whether answer for the question is right
+        /// or not
+        /// </summary>
+        /// <returns>True if answer is right.</returns>
         public abstract bool CheckAnswer();
         
         protected override void CreateChildControls()

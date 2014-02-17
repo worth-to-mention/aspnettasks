@@ -8,13 +8,19 @@ using System.Drawing.Imaging;
 
 namespace TestingSystem
 {
+    /// <summary>
+    /// HSV representation of a color. 
+    /// </summary>
     public struct HSVColor
     {
         public double H;
         public double S;
         public double V;
         public int A;
-
+        /// <summary>
+        /// Converts the color from HSV to RGB representaion.
+        /// </summary>
+        /// <returns>RGB representation of the color.</returns>
         public RGBColor ToRGB()
         {
             double chroma = S * V;
@@ -64,6 +70,9 @@ namespace TestingSystem
             return rgbColor;
         }
     }
+    /// <summary>
+    /// RGB representaion of a color.
+    /// </summary>
     public struct RGBColor
     {
         public int R;
@@ -72,9 +81,21 @@ namespace TestingSystem
         public int A;
     }
 
+    /// <summary>
+    /// A class for chart diagram generation. 
+    /// </summary>
     public static class ChartGenerator
     {
         private const double precision = 0.000000001;
+
+        /// <summary>
+        /// Creates chart diagram based on specified data
+        /// with specified with ad height.
+        /// </summary>
+        /// <param name="width">Width of the image.</param>
+        /// <param name="height">Height of the image.</param>
+        /// <param name="data">Data for the chart diagram.</param>
+        /// <returns>Chart diagram png image bytes in memory stream.</returns>
         public static MemoryStream CreateChart(int width, int height, List<Tuple<double, string>> data)
         {
             if (data == null)
