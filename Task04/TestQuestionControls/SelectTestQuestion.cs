@@ -61,11 +61,16 @@ namespace TestQuestionControls
 
         public override bool CheckAnswer()
         {
-            return answers.All(asnw =>
+            var selectedItems = GetSelectedItems().ToList();
+            if (selectedItems.Count != answers.Count
+                || selectedItems.Count == 0)
+                return false;
+
+            return answers.All(answ =>
             {
                 foreach(var item in GetSelectedItems())
                 {
-                    if (item.Value == asnw)
+                    if (item.Value == answ)
                         return true;
                 }
                 return false;

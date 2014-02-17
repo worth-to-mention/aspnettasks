@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Web.UI.HtmlControls;
 using System.IO;
 using System.Xml.Linq;
 using System.Text;
@@ -61,41 +62,29 @@ namespace TestingSystem
             }
             CreateTest(testId);                        
         }
-
         protected void Page_Load(object sender, EventArgs e)
         {            
             if (IsPostBack)
             {
-                results = XElement.Load(resultsPath);
-
-                if (firstTime)
+                Validate();
+                if (IsValid)
                 {
-                    SaveResults();
-                    firstTime = false;
+                    results = XElement.Load(resultsPath);
+
+                    if (firstTime || true)
+                    {
+                        SaveResults();
+                        firstTime = false;
+                    }
+                    ShowResults();
+
+                    TestPlaceHolder.Visible = false;
                 }
-                ShowResults();
-                //We no longer need user name field and 
-                //submit button, so remove it.
-                Controls.Remove(UserName);
-                Controls.Remove(TestSubmit);
-            }
-                
+            }                
         }
 
         private void ShowResults()
         {
-            //var query = from question in tests.Elements("Test")
-            //                .Where(el => el.Attribute("id").Value == testId.ToString())
-            //                .SelectMany(el => el.Descendants("Question"))
-            //            from result in results.Elements("Result")
-            //                .Where(el => String.Equals(el.Element("User").Value, UserName.Text, StringComparison.CurrentCultureIgnoreCase))
-            //                .Where(el => el.Element("TestId").Value == testId.ToString())
-            //            where question.Attribute("id").Value == result.Element("QuestionId").Value
-            //            select new
-            //            {
-            //                Passed = result.Attribute("passed").Value == "yes",
-            //                Tittle = question.Element("Text")
-            //            };
             var query = 
                 from result in results.Elements("Result")
                 .Where(el => String.Equals(el.Element("User").Value, UserName.Text, StringComparison.CurrentCultureIgnoreCase))
@@ -107,21 +96,36 @@ namespace TestingSystem
             var userResults = query.ToList();
 
             int passed = userResults.Where(res => res.Passed).Count();
+            int failed = userResults.Count - passed;
 
-            Response.Write(String.Format("{0}, you have gave the right answer for {1} question{2} of {3}."
+            HtmlGenericControl paragraph = new HtmlGenericControl("p");
+
+            var resultText = new HtmlGenericControl("p");
+            resultText.InnerText = String.Format("{0}, you have gave the right answer for {1} of {2} questions."
                 , UserName.Text
                 , passed.ToString()
-                , passed == 1 ? String.Empty : "s"
                 , userResults.Count
-                ));
-            Response.End();
+                );
+            paragraph.Controls.Add(resultText);
+
+            var data = new List<Tuple<double, string>>();
+            data.Add(new Tuple<double, string>(passed, String.Format("You gave {0} right answers.", passed.ToString())));
+            if (failed > 0)
+                data.Add(new Tuple<double, string>(failed, String.Format("You gave {0} wrong answers.", failed.ToString())));
+            byte[] buffer = ChartGenerator.CreateChart(500, 250, data).ToArray();
+
+            Image resultDiagram = new Image();
+            resultDiagram.ImageUrl = "data:image/png;base64," + Convert.ToBase64String(buffer);
+            paragraph.Controls.Add(resultDiagram);
+
+            Form.Controls.Add(paragraph);
         }
 
         private void SaveResults()
         {
             foreach(var testQuestion in questions)
             {
-                string user = UserName.Text;
+                string user = UserName.Text.Trim().ToLower();
                 string test = testId.ToString();
                 string question = testQuestion.QuestionId.ToString();
                 bool passed = testQuestion.CheckAnswer();

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Drawing;
 
 namespace TestQuestionControls
 {
@@ -42,6 +43,8 @@ namespace TestQuestionControls
 
         public override bool CheckAnswer()
         {
+            if (SelectedItem == null)
+                return false;
             return SelectedItem.Value == AnswerItemId;
         }
 
@@ -51,6 +54,18 @@ namespace TestQuestionControls
             base.CreateChildControls();
 
             Controls.Add(optionsList);
+
+        }
+
+        protected override void OnInit(EventArgs e)
+        {
+            base.OnInit(e);
+
+        }
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
         }
 
     }

@@ -21,10 +21,13 @@ namespace TestQuestionControls
 
         public string Answer { get; set; }
 
-
+        
         public override bool CheckAnswer()
         {
-            return String.Equals(textInput.Text, Answer, StringComparison.CurrentCultureIgnoreCase);
+            string inputText = textInput.Text.Trim();
+            if (String.IsNullOrEmpty(inputText))
+                return false;            
+            return String.Equals(inputText, Answer, StringComparison.CurrentCultureIgnoreCase);
         }
         
         
