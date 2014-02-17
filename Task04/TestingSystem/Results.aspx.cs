@@ -7,61 +7,120 @@ using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 using System.Xml;
 using System.Xml.Linq;
+using System.IO;
+using System.Xml.Schema;
 
 namespace TestingSystem
 {
     public partial class Results : System.Web.UI.Page
     {
         private readonly string testPath;
+        private readonly string testSchemaPath;
         private readonly string resultsPath;
-        private XElement tests;
-        private XElement results;
+        private readonly string resultsSchemaPath;
+        private XmlSchemaSet schemas;
+        private XNamespace tn;
+        private XDocument tests;
+        private XNamespace rn;
+        private XDocument results;
 
         public Results() : base()
         {
+            tn = "http://maleficus.com/Test";
             testPath = Server.MapPath("~/DB/Tests.xml");
+            testSchemaPath = Server.MapPath("~/DB/Tests.xsd");
+            rn = "http://maleficus.com/Result";
             resultsPath = Server.MapPath("~/DB/Results.xml");
+            resultsSchemaPath = Server.MapPath("~/DB/Results.xsd");
+            schemas = new XmlSchemaSet();
         }
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            tests = XElement.Load(testPath);
-            results = XElement.Load(resultsPath);
-            
-            if (results.HasElements)
+            if (!File.Exists(testPath))
+            {
+                ShowNoDataMessage();
+                return;
+            }
+            if (!File.Exists(resultsPath))
+            {
+                ShowNoDataMessage();
+                return;
+            }
+            tests = XDocument.Load(testPath);
+            results = XDocument.Load(resultsPath);
+
+            // Load schemas
+
+            if (!File.Exists(testSchemaPath))
+            {
+                ShowNoDataMessage();
+                return;
+            }
+            if (!File.Exists(resultsSchemaPath))
+            {
+                ShowNoDataMessage();
+                return;
+            }
+            schemas.Add(tn.ToString(), testSchemaPath);
+            schemas.Add(rn.ToString(), resultsSchemaPath);
+
+            // Validate files
+
+            bool error = false;
+
+            tests.Validate(schemas, (s, a) => error = true);
+            if (error)
+            {
+                ShowNoDataMessage();
+                return;
+            }
+            results.Validate(schemas, (s, a) => error = true);
+            if (error)
+            {
+                ShowNoDataMessage();
+                return;
+            }
+
+            if (results.Root.HasElements)
             {
                 ShowResults();
             }
             else
             {
-                Label noResults = new Label();
-                noResults.Text = "No data to display.";
-                Controls.Add(noResults);
+                ShowNoDataMessage();
             }           
 
+        }
+
+        private void ShowNoDataMessage()
+        {
+            Label noResults = new Label();
+            noResults.Text = "No data to display.";
+            Controls.Add(noResults);
         }
 
         private void ShowResults()
         {
             //holy godness...
             var query =
-                from test in tests.Elements("Test")
-                from result in results.Elements("Result")
-                where test.Attribute("id").Value == result.Element("TestId").Value
+                from test in tests.Root.Elements(tn + "Test")
+                from result in results.Root.Elements(rn + "Result")
+                where test.Attribute("id").Value == result.Element(rn + "TestId").Value
                 select new
                 {
                     TestId = test.Attribute("id").Value,
-                    TestTitle = test.Element("Title").Value,
-                    QuestionId = result.Element("QuestionId").Value,
-                    User = result.Element("User").Value,
+                    TestTitle = test.Element(tn + "Title").Value,
+                    QuestionId = result.Element(rn + "QuestionId").Value,
+                    User = result.Element(rn + "User").Value,
                     Passed = result.Attribute("passed").Value == "yes"
                 } into testData
                 group testData by testData.TestId into testDataByTestId
                 select new
                 {
-                    TestTitle = tests.Elements("Test")
+                    TestTitle = tests.Root.Elements(tn + "Test")
                         .Where(el => el.Attribute("id").Value == testDataByTestId.Key)
-                        .First().Element("Title").Value,
+                        .First().Element(tn + "Title").Value,
                     UserResults =
                         from user_count_passed in (   
                             from res in testDataByTestId

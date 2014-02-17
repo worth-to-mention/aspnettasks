@@ -14,9 +14,11 @@ namespace TestingSystem
     {
         private readonly Dictionary<int, string> testUrls;
         private string testsFile;
+        private XNamespace tn;
 
         public Default()
         {
+            tn = "http://maleficus.com/Test";
             testsFile = Server.MapPath("~/DB/Tests.xml");
         }
 
@@ -27,12 +29,12 @@ namespace TestingSystem
 
             XElement xmlTests = XElement.Load(testsFile);
 
-            var query = xmlTests.Descendants("Test").Select(test =>
+            var query = xmlTests.Elements(tn + "Test").Select(test =>
             {
-                int testId = Int32.Parse(test.Attribute("id").Value);
+                int testId = (int)test.Attribute("id");
                 return new
                 {
-                    Title = test.Element("Title").Value,
+                    Title = test.Element(tn + "Title").Value,
                     Id = testId
                 };
             });

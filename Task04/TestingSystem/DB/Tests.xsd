@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-            targetNamespace="http://maleficusl.com/Test"
-            xmlns="http://maleficusl.com/Test"
+            targetNamespace="http://maleficus.com/Test"
+            xmlns="http://maleficus.com/Test"
             elementFormDefault="qualified"
             attributeFormDefault="unqualified"
             >

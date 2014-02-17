@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<x:Tests xmlns:x="http://maleficusl.com/Test">
+<x:Tests xmlns:x="http://maleficus.com/Test">
   <x:Test id="0">
     <x:Title>Informatics</x:Title>
     <x:Questions>
