@@ -12,7 +12,6 @@ namespace TestingSystem
 {
     public partial class Default : System.Web.UI.Page
     {
-        private readonly Dictionary<int, string> testUrls;
         private string testsFile;
         private XNamespace tn;
 
