@@ -17,15 +17,6 @@ namespace TestingSystem
 {
     public partial class Test : System.Web.UI.Page
     {
-        private readonly string testPath;
-        private readonly string testSchemaPath;
-        private readonly string resultsPath;
-        private readonly string resultsSchemaPath;
-        private XmlSchemaSet schemas;
-        private XNamespace tn;
-        private XDocument tests;
-        private XNamespace rn;
-        private XDocument results;
         private readonly List<TestQuestion> questions;
         private int testId;
         private bool firstTime
@@ -43,54 +34,12 @@ namespace TestingSystem
 
         public Test()
         {
-            tn = "http://maleficus.com/Test";
-            testPath = Server.MapPath("~/DB/Tests.xml");
-            testSchemaPath = Server.MapPath("~/DB/Tests.xsd");
-            rn = "http://maleficus.com/Result";
-            resultsPath = Server.MapPath("~/DB/Results.xml");
-            resultsSchemaPath = Server.MapPath("~/DB/Results.xsd");
             questions = new List<TestQuestion>();
-            schemas = new XmlSchemaSet();
         }
 
         protected override void OnInit(EventArgs e)
         {
-            base.OnInit(e);            
-            if (!File.Exists(testPath))
-            {
-                ShowErrorPage();
-                return;
-            }
-            tests = XDocument.Load(testPath);
-
-
-
-            // Load schemas
-
-            if (!File.Exists(testSchemaPath))
-            {
-                ShowErrorPage();
-                return;
-            }
-            if (!File.Exists(resultsSchemaPath))
-            {
-                ShowErrorPage();
-                return;
-            }
-            schemas.Add(tn.ToString(), testSchemaPath);
-            schemas.Add(rn.ToString(), resultsSchemaPath);
-
-            // Check tests
-
-            bool error = false;
-            
-            tests.Validate(schemas, (s, a) => error = true);
-            if (error)
-            {
-                ShowErrorPage();
-                return;
-            }
-
+            base.OnInit(e);  
 
             //Save current test id for futher usage
             if (!Int32.TryParse(Request.Params["id"], out testId))
@@ -107,19 +56,6 @@ namespace TestingSystem
                 Validate();
                 if (IsValid)
                 {
-                    if (!File.Exists(resultsPath))
-                        CreateResultsFile();
-                    else
-                        results = XDocument.Load(resultsPath);
-                    bool error = false;
-
-                    results.Validate(schemas, (s, a) => error = true);
-                    if (error)
-                    {
-                        ShowErrorPage();
-                        return;
-                    }
-
                     if (firstTime || true)
                     {
                         SaveResults();
@@ -134,31 +70,41 @@ namespace TestingSystem
 
         private void ShowResults()
         {
-            var query = 
-                from result in results.Root.Elements(rn + "Result")
-                .Where(el => String.Equals(el.Element(rn + "User").Value, UserName.Text.Trim().ToLower(), StringComparison.CurrentCultureIgnoreCase))
-                .Where(el => el.Element(rn + "TestId").Value == testId.ToString())
-                select new 
-                {
-                    Passed = result.Attribute("passed").Value == "yes"
-                };
-            var userResults = query.ToList();
+            var config = System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration("~/");
+            var conSettings = config.ConnectionStrings;
+            if (conSettings.ConnectionStrings.Count < 0)
+            {
+                ShowErrorPage();
+                return;
+            }
+            string connectionString = conSettings.ConnectionStrings["TestingSystem"].ConnectionString;
 
-            int passed = userResults.Where(res => res.Passed).Count();
-            int failed = userResults.Count - passed;
-
+            var userRes = new DataAccess.UserTestingResults();
+            string user = UserName.Text.Trim().ToLower();
+                
+            using (var context = new DataAccess.TestingSystemDataContext(connectionString))
+            {
+                int userID = context.GetOrCreateUser(user);
+                userRes = context.GetUserTestingResults(userID, testId);
+            }
+            if (userRes == null)
+            {
+                ShowErrorPage();
+                return;
+            }
             HtmlGenericControl paragraph = new HtmlGenericControl("p");
 
             var resultText = new HtmlGenericControl("p");
             resultText.InnerText = String.Format("{0}, you have gave the right answer for {1} of {2} questions."
-                , UserName.Text
-                , passed.ToString()
-                , userResults.Count
+                , user
+                , userRes.Passed
+                , userRes.Count
                 );
             paragraph.Controls.Add(resultText);
 
+            int failed = userRes.Count - userRes.Passed;
             var data = new List<Tuple<double, string>>();
-            data.Add(new Tuple<double, string>(passed, String.Format("You gave {0} right answers.", passed.ToString())));
+            data.Add(new Tuple<double, string>(userRes.Passed, String.Format("You gave {0} right answers.", userRes.Passed.ToString())));
             if (failed > 0)
                 data.Add(new Tuple<double, string>(failed, String.Format("You gave {0} wrong answers.", failed.ToString())));
             byte[] buffer = ChartGenerator.CreateChart(500, 250, data).ToArray();
@@ -172,38 +118,31 @@ namespace TestingSystem
 
         private void SaveResults()
         {
-            foreach(var testQuestion in questions)
+            var config = System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration("~/");
+            var conSettings = config.ConnectionStrings;
+            if (conSettings.ConnectionStrings.Count < 0)
+            {
+                ShowErrorPage();
+                return;
+            }
+            string connectionString = conSettings.ConnectionStrings["TestingSystem"].ConnectionString;   
+            
+            var resultsData = new List<DataAccess.Pair<int, bool>>();
+            foreach (var testQuestion in questions)
+            {
+                var pair = new DataAccess.Pair<int, bool>
+                {
+                    First = testQuestion.QuestionId,
+                    Second = testQuestion.CheckAnswer()
+                };
+                resultsData.Add(pair);
+            }
+            using (var context = new DataAccess.TestingSystemDataContext(connectionString))
             {
                 string user = UserName.Text.Trim().ToLower();
-                string test = testId.ToString();
-                string question = testQuestion.QuestionId.ToString();
-                bool passed = testQuestion.CheckAnswer();
-                XElement result = null;
-                if (results.Root.HasElements)
-                {
-                    //Check if we already have record for such a user, a test, and an question.
-                    result = results.Root.Elements(rn + "Result")
-                    .Where(res =>
-                    {
-                        return String.Equals(res.Element(rn + "User").Value, user, StringComparison.CurrentCultureIgnoreCase)
-                            && res.Element(rn + "TestId").Value == test
-                            && res.Element(rn + "QuestionId").Value == question;
-                    }).FirstOrDefault();
-                }                 
-                if (result == null)                
-                {
-                    //If such a record does not exist, create it.
-                    result = new XElement(rn + "Result",
-                        new XElement(rn + "User", user),
-                        new XElement(rn + "TestId", test),
-                        new XElement(rn + "QuestionId", question)
-                        );
-                    results.Root.Add(result);
-                }
-                result.SetAttributeValue("passed", passed ? "yes" : "no");
+                int userID = context.GetOrCreateUser(user);
+                context.SaveUserResults(userID, testId, resultsData);
             }
-
-            results.Save(resultsPath);
         }
 
         private void ShowErrorPage()
@@ -214,92 +153,103 @@ namespace TestingSystem
 
         private void CreateTest(int testId)
         {
-            XElement test = tests.Root
-                .Elements(tn + "Test")
-                .Where(el => el.Attribute("id").Value == testId.ToString())
-                .FirstOrDefault();
+            var config = System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration("~/");
+            var conSettings = config.ConnectionStrings;
+            if (conSettings.ConnectionStrings.Count < 0)
+            {
+                ShowErrorPage();
+                return;
+            }
+            string connectionString = conSettings.ConnectionStrings["TestingSystem"].ConnectionString;
+
+            DataAccess.Test test;
+            using(var context = new DataAccess.TestingSystemDataContext(connectionString))
+            {
+                test = context.GetTest(testId);
+            }
             if (test == null)
             {
                 ShowErrorPage();
                 return;
             }
-            testHeader.Text = test.Element(tn + "Title").Value;
-            foreach (var question in test.Element(tn + "Questions").Elements(tn + "Question"))
+
+            testHeader.Text = test.Title;
+            foreach(var question in test.Questions)
             {
-                switch (question.Attribute("type").Value)
-                {
-                    case "Radio":
-                        CreateRadioQuestion(question);
-                        break;
-                    case "Select":
-                        CreateSelectQuestion(question);
-                        break;
-                    case "Text":
-                        CreateTextQuestion(question);
-                        break;
-                    default:
-                        ShowErrorPage();
-                        return;
-                }
+                CreateQuestion(question);
             }
             questions.ForEach(el => TestQuestions.Controls.Add(el));
         }
 
-        private void CreateTextQuestion(XElement question)
+        private void CreateQuestion(DataAccess.Question question)
+        {
+            switch (question.Type)
+            {
+                case TestingSystem.DataAccess.QuestionType.Radio:
+                    CreateRadioQuestion(question);
+                    break;
+                case TestingSystem.DataAccess.QuestionType.Select:
+                    CreateSelectQuestion(question);
+                    break;
+                case TestingSystem.DataAccess.QuestionType.Text:
+                    CreateTextQuestion(question);
+                    break;
+                default:
+                    ShowErrorPage();
+                    return;
+            }
+        }
+
+        private void CreateTextQuestion(DataAccess.Question question)
         {
             TextTestQuestion textQuestion = new TextTestQuestion();
-            textQuestion.Title = question.Element(tn + "Text").Value;
-            textQuestion.QuestionId = Convert.ToInt32(question.Attribute("id").Value);
-            textQuestion.Answer = question.Element(tn + "Answer").Value;
+            textQuestion.CssClass = "test-testQuestion test-textTestQuestion";
+            textQuestion.Title = question.Text;
+            textQuestion.QuestionId = question.QuestionID;
+            textQuestion.Answer = question.Options[0].Text;
             questions.Add(textQuestion);
         }
 
-        private void CreateSelectQuestion(XElement question)
+        private void CreateSelectQuestion(DataAccess.Question question)
         {
             SelectTestQuestion selectQuestion = new SelectTestQuestion();
-            selectQuestion.Title = question.Element(tn + "Text").Value;
-            selectQuestion.QuestionId = Convert.ToInt32(question.Attribute("id").Value);
-            selectQuestion.AddItems(question.Element(tn + "Options").Elements(tn + "Option").Select(option =>
+            selectQuestion.CssClass = "test-testQuestion test-selectTestQuestion";
+            selectQuestion.Title = question.Text;
+            selectQuestion.QuestionId = question.QuestionID;
+            selectQuestion.AddItems(question.Options.Select(option =>
             {
-                if (option.Attribute("isanswer") != null)
+                if (option.IsAnswer)
                 {
-                    selectQuestion.AddAnswerId(option.Attribute("id").Value);
+                    selectQuestion.AddAnswerId(option.OptionID.ToString());
                 }
                 return new ListItem
                 {
-                    Text = option.Value,
-                    Value = option.Attribute("id").Value
+                    Text = option.Text,
+                    Value = option.OptionID.ToString()
                 };
             }));
             questions.Add(selectQuestion);
         }
 
-        private void CreateRadioQuestion(XElement question)
+        private void CreateRadioQuestion(DataAccess.Question question)
         {
             RadioTestQuestion radioQuestion = new RadioTestQuestion();
-            radioQuestion.Title = question.Element(tn + "Text").Value;
-            radioQuestion.QuestionId = Convert.ToInt32(question.Attribute("id").Value);
-            radioQuestion.AddItems(question.Element(tn + "Options").Elements(tn + "Option").Select(option =>
+            radioQuestion.CssClass = "test-testQuestion test-radioTestQuestion";
+            radioQuestion.Title = question.Text;
+            radioQuestion.QuestionId = question.QuestionID;
+            radioQuestion.AddItems(question.Options.Select(option =>
             {
-                if (option.Attribute("isanswer") != null)
+                if (option.IsAnswer)
                 {
-                    radioQuestion.AnswerItemId = option.Attribute("id").Value;
+                    radioQuestion.AnswerItemId = option.OptionID.ToString();
                 }
                 return new ListItem
                 {
-                    Text = option.Value,
-                    Value = option.Attribute("id").Value
+                    Text = option.Text,
+                    Value = option.OptionID.ToString()
                 };
             }));
             questions.Add(radioQuestion);
-        }
-
-        private void CreateResultsFile()
-        {
-            results = new XDocument(
-                new XElement(rn + "Results",
-                    new XAttribute(XNamespace.Xmlns + "x", "http://maleficus.com/Result")));
-            results.Save(resultsPath);
         }
     }
 }

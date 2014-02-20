@@ -57,9 +57,8 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="css\main.css" />
     <Content Include="Main.Master" />
-    <None Include="DB\Results.xsd" />
-    <None Include="DB\Tests.xsd" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -68,12 +67,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="DB\Results.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="DB\Tests.xml">
-      <SubType>Designer</SubType>
-    </Content>
     <Content Include="Default.aspx" />
     <Content Include="Results.aspx" />
     <Content Include="Test.aspx" />
@@ -114,6 +107,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\TestingSystem.DataAccess\TestingSystem.DataAccess.csproj">
+      <Project>{5c188a48-34b5-4453-985d-071fb5a7818a}</Project>
+      <Name>TestingSystem.DataAccess</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TestQuestionControls\TestQuestionControls.csproj">
       <Project>{858328d5-2ab4-4b2c-97ed-dd342228dd48}</Project>
       <Name>TestQuestionControls</Name>

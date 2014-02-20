@@ -12,44 +12,40 @@ namespace TestingSystem
 {
     public partial class Default : System.Web.UI.Page
     {
-        private string testsFile;
-        private XNamespace tn;
-
-        public Default()
-        {
-            tn = "http://maleficus.com/Test";
-            testsFile = Server.MapPath("~/DB/Tests.xml");
-        }
-
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!File.Exists(testsFile))
-                return;
-
-            XElement xmlTests = XElement.Load(testsFile);
-
-            var query = xmlTests.Elements(tn + "Test").Select(test =>
+            var config = System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration("~/");
+            var conSettings = config.ConnectionStrings;
+            if (conSettings.ConnectionStrings.Count < 0)
             {
-                int testId = (int)test.Attribute("id");
-                return new
-                {
-                    Title = test.Element(tn + "Title").Value,
-                    Id = testId
-                };
-            });
+                ShowErrorPage();
+                return;
+            }
+            string connectionString = conSettings.ConnectionStrings["TestingSystem"].ConnectionString;
 
             TestList.Controls.Clear();
 
-            foreach(var test in query)
+            var tests = new List<DataAccess.Test>();
+            using(var context = new DataAccess.TestingSystemDataContext(connectionString))
+            {
+                tests = context.GetTest();
+            }
+
+            foreach(var test in tests)
             {
                 WebControl li = new WebControl(HtmlTextWriterTag.Li);
                 HyperLink a = new HyperLink();
                 a.Text = test.Title;
-                a.NavigateUrl = "/Test.aspx?id=" + test.Id.ToString();
+                a.NavigateUrl = "/Test.aspx?id=" + test.TestID.ToString();
                 li.Controls.Add(a);
 
                 TestList.Controls.Add(li);
             }
+        }
+        private void ShowErrorPage()
+        {
+            Response.StatusCode = 404;
+            Response.End();
         }
     }
 }
