@@ -1,0 +1,52 @@
+﻿<%@ Master Language="C#" MasterPageFile="~/Main.Master" AutoEventWireup="true" CodeBehind="BasicLayout.master.cs" Inherits="TestingSystem.BasicLayout" %>
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="PageHeader" runat="server">
+    <div class="header-logo">        
+        <h1>Sample Testing System</h1>
+    </div>
+    <div class="header-navPanel">
+        <ul>
+            <li>
+                <a href="Default.aspx">Home</a>
+            </li>
+            <li>
+                <a href="Test.aspx">Available tests</a>
+            </li>
+            <li>
+                <a href="Results.aspx">Testing results</a>
+            </li>
+        </ul>
+        <asp:LoginView runat="server">
+            <LoggedInTemplate>
+                <ul>
+                    <li>
+                        <a href="CreateTest.aspx">Create new test</a>
+                    </li>
+                </ul>
+            </LoggedInTemplate>
+        </asp:LoginView>
+    </div>
+    <div class="header-loginInfo">
+        <asp:LoginView runat="server">        
+            <AnonymousTemplate>
+                You are not logged in in. Do you want to 
+                <a href="Login.aspx">sign in</a>
+                ? Or maybe 
+                <a href="Signup.aspx">sign up</a>
+                ?
+            </AnonymousTemplate>
+            <LoggedInTemplate>
+                Welcome,
+                <asp:LoginName runat="server"/>.
+                <asp:LoginStatus runat="server" LogoutText="Sign out" />
+            </LoggedInTemplate>
+        </asp:LoginView>
+    </div>
+
+</asp:Content>
+<asp:Content ID="Content3" ContentPlaceHolderID="PageContent" runat="server">
+    <asp:ContentPlaceHolder ID="PageContent" runat="server" />
+</asp:Content>
+<asp:Content ID="Content4" ContentPlaceHolderID="PageFooter" runat="server">
+</asp:Content>
