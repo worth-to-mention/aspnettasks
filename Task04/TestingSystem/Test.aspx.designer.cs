@@ -13,6 +13,15 @@ namespace TestingSystem {
     public partial class Test {
         
         /// <summary>
+        /// TestPageContent control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.PlaceHolder TestPageContent;
+        
+        /// <summary>
         /// testHeader control.
         /// </summary>
         /// <remarks>
@@ -22,13 +31,13 @@ namespace TestingSystem {
         protected global::System.Web.UI.WebControls.Literal testHeader;
         
         /// <summary>
-        /// TestPlaceHolder control.
+        /// TestContent control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.PlaceHolder TestPlaceHolder;
+        protected global::System.Web.UI.WebControls.PlaceHolder TestContent;
         
         /// <summary>
         /// UserName control.

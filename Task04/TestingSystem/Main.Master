@@ -5,15 +5,33 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <title>Sample Testing System</title>
+    <link rel="stylesheet" href="/css/main.css" />
     <asp:ContentPlaceHolder ID="head" runat="server">
     </asp:ContentPlaceHolder>
 </head>
 <body>
-    <form id="form1" runat="server">
-    <div>
-        <h1>Sample Testing System</h1>
-        <asp:ContentPlaceHolder ID="PageContent" runat="server" />
+       
+    <div class="wrapper">
+        <div class="page">
+            <form id="form1" runat="server"> 
+                <div class="page-header">
+                    <div class="page-header-content">
+                        <asp:ContentPlaceHolder ID="PageHeader" runat="server" />
+                    </div>
+                </div>
+                <div class="page-content-border">
+                    <div class="page-content">
+                        <asp:ContentPlaceHolder ID="PageContent" runat="server" />
+                    </div>
+                </div>
+            </form> 
+        </div> 
+        <div class="footer-fix"></div>
     </div>
-    </form>
+    <div class="page-footer">
+        <div class="page-footer-content">            
+            <asp:ContentPlaceHolder ID="PageFooter" runat="server" />
+        </div>
+    </div>
 </body>
 </html>

@@ -43,7 +43,7 @@ namespace TestingSystem
         {
             Label noResults = new Label();
             noResults.Text = "No data to display.";
-            Controls.Add(noResults);
+            ResultsContent.Controls.Add(noResults);
         }
 
         private void ShowResults(List<DataAccess.TesttingStats> stats)
@@ -61,8 +61,8 @@ namespace TestingSystem
                 foreach (var el in stat.AnsweringStat)
                 {
                     data.Add(new Tuple<double, string>(el.Second
-                        , String.Format("People gave {0}% right answers {1} times."
-                            , el.First
+                        , String.Format("{0}% right answers."
+                            , el.First.ToString()
                             , el.Second.ToString()
                             )
                         )
@@ -73,8 +73,7 @@ namespace TestingSystem
                 Image resultDiagram = new Image();
                 resultDiagram.ImageUrl = "data:image/png;base64," + Convert.ToBase64String(buffer);
                 paragraph.Controls.Add(resultDiagram);
-
-                Form.Controls.Add(paragraph);
+                ResultsContent.Controls.Add(paragraph);
             }
         }
         private void ShowErrorPage()

@@ -44,11 +44,15 @@ namespace TestingSystem
             //Save current test id for futher usage
             if (!Int32.TryParse(Request.Params["id"], out testId))
             {
-                ShowErrorPage();
-                return;
+                ShowAvailableTests();
             }
-            CreateTest(testId);                        
+            else
+            {
+                ShowTest(testId);
+            }                        
         }
+
+
         protected void Page_Load(object sender, EventArgs e)
         {            
             if (IsPostBack)
@@ -62,14 +66,15 @@ namespace TestingSystem
                         firstTime = false;
                     }
                     ShowResults();
-
-                    TestPlaceHolder.Visible = false;
+                    TestContent.Visible = false;
                 }
             }                
         }
 
         private void ShowResults()
         {
+            
+            
             var config = System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration("~/");
             var conSettings = config.ConnectionStrings;
             if (conSettings.ConnectionStrings.Count < 0)
@@ -113,7 +118,7 @@ namespace TestingSystem
             resultDiagram.ImageUrl = "data:image/png;base64," + Convert.ToBase64String(buffer);
             paragraph.Controls.Add(resultDiagram);
 
-            Form.Controls.Add(paragraph);
+            TestPageContent.Controls.Add(paragraph);
         }
 
         private void SaveResults()
@@ -151,7 +156,7 @@ namespace TestingSystem
             Response.End();
         }
 
-        private void CreateTest(int testId)
+        private void ShowTest(int testId)
         {
             var config = System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration("~/");
             var conSettings = config.ConnectionStrings;
@@ -179,6 +184,43 @@ namespace TestingSystem
                 CreateQuestion(question);
             }
             questions.ForEach(el => TestQuestions.Controls.Add(el));
+        }
+
+        private void ShowAvailableTests()
+        {
+            TestPageContent.Controls.Clear();
+            var config = System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration("~/");
+            var conSettings = config.ConnectionStrings;
+            if (conSettings.ConnectionStrings.Count < 0)
+            {
+                ShowErrorPage();
+                return;
+            }
+            string connectionString = conSettings.ConnectionStrings["TestingSystem"].ConnectionString;
+            
+            var h2 = new HtmlGenericControl("h2");
+            h2.InnerText = "Available tests:";
+
+            var ul = new HtmlGenericControl("ul");
+
+            var tests = new List<DataAccess.Test>();
+            using (var context = new DataAccess.TestingSystemDataContext(connectionString))
+            {
+                tests = context.GetTest();
+            }
+
+            foreach (var test in tests)
+            {
+                var li = new HtmlGenericControl("li");
+                HyperLink a = new HyperLink();
+                a.Text = test.Title;
+                a.NavigateUrl = "/Test.aspx?id=" + test.TestID.ToString();
+                li.Controls.Add(a);
+
+                ul.Controls.Add(li);
+            }
+            TestPageContent.Controls.Add(h2);
+            TestPageContent.Controls.Add(ul);
         }
 
         private void CreateQuestion(DataAccess.Question question)

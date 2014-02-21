@@ -129,8 +129,15 @@ namespace TestingSystem
             using(Bitmap bmp = new Bitmap(width, height))
             using(Graphics g = Graphics.FromImage(bmp))
             {
+                g.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+
+                var format = new StringFormat();
+                format.Alignment = StringAlignment.Near;
+                format.LineAlignment = StringAlignment.Center;
+                
+
                 Brush backgroundBrush = new SolidBrush(Color.FromArgb(0x66, 0x66, 0x66));
-                Font f = new Font("Georgia", 12);
+                Font f = new Font("Verdana", 10);
                 
 
                 PointF origin = new PointF
@@ -153,20 +160,20 @@ namespace TestingSystem
                 foreach(var el in data)
                 {
                     deltaAngle = (float)(el.Item1 / sum * 360);
+                    string text = String.Format("{0} ({1:P2})", el.Item2, deltaAngle / 360.0);
 
                     RGBColor rgbColor = color.ToRGB();
                     Brush b = new SolidBrush(Color.FromArgb(rgbColor.A, rgbColor.R, rgbColor.G, rgbColor.B));
 
                     g.FillPie(b, 0, 0, diameter, diameter, startAngle, deltaAngle);
 
-                    SizeF strSize = g.MeasureString(el.Item2, f, legendSize);
+                    SizeF strSize = g.MeasureString(text, f, legendSize);
                     RectangleF layout = new RectangleF(
                         new PointF(legendLayout.X, currentLegendHeight), strSize);
                     RectangleF markerLayout = new RectangleF(
-                        new PointF(width - markerSize, currentLegendHeight)
+                        new PointF(width - markerSize, currentLegendHeight + layout.Height / 2 - markerSize / 2)
                         , new SizeF(markerSize, markerSize));
-
-                    g.DrawString(el.Item2, f, backgroundBrush, layout);
+                    g.DrawString(text, f, backgroundBrush, layout, format);
                     g.FillRectangle(b, markerLayout);
                                         
                     startAngle += deltaAngle;

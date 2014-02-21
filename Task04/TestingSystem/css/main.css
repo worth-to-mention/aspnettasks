@@ -1,10 +1,137 @@
-﻿* {
+﻿/*<Global>*/
+* {
     margin: 0;
-    padding: 0;
+    padding: 0; 
+}
+
+html, body{
+    height: 100%;
+    background-color: #666;
+    font-family:Verdana, Geneva, sans-serif;
+    font-size: 10pt;
+    color: #666;
 }
 h1, h2, h3, h4, h5, h6 {
+    margin: 10px 0;
+}
+h6 {
+    font-size: 10pt;
+}
+h5 {
+    font-size: 12pt;
+}
+h4 {
+    font-size: 14pt;
+}
+h3 {
+    font-size: 16pt;
+}
+h2 {
+    font-size: 18pt;
+}
+h1 {
+    font-size: 20pt;
+}
+a{
+    color: #666;
+    text-decoration: underline;
+}
+a:hover{
+    color: #222;    
+    text-decoration: none;
+}
+ul {
+    padding-left: 20px;
+}
+ul > li {
+   
+}
+
+/*</Global>*/
+/*<Layout>*/
+.wrapper {
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    margin-bottom: -100px;
+}
+.footer-fix {
+    height: 100px;
+    clear:both;
+}
+.page-footer {
+    height: 99px;
+    border-top: 1px solid #222;    
+    background-color: #a4a4a4;
+}
+.page {
+    overflow: hidden;
+}
+.page-header {
+    height: 149px;
+    background-color: #a4a4a4;
+    overflow: hidden;
+    border-bottom: 1px solid #222;
+}
+.page-content-border {
+    overflow: hidden;
+    background-color: #a4a4a4;
+    border: 4px dashed #494949;
+    padding: 5px;
+    border-radius: 5px;
+    width: 900px;
+    margin: 10px auto;
+}
+.page-content {
+    background-color: #a4a4a4;
+    border-radius: 5px;
+    color: #666;
+    overflow: hidden;
     margin: 10px;
 }
+/*</Layout>*/
+
+/*<Header>*/
+.page-header .page-header-content {
+    width: 900px;
+    margin: 0 auto;
+}
+.page-header .header-logo {
+    height: 100px;
+}
+.page-header .header-loginInfo {
+    height: 49px;
+    float: right;
+}
+.page-header .header-navPanel {
+    height: 49px;
+    float: left;
+    overflow: hidden;
+}
+.header-navPanel ul {
+    list-style: none;
+    float: left;
+    overflow: hidden;
+}
+.header-navPanel ul > li {
+    float: left;
+    margin-right: 10px;
+    overflow: hidden;
+}
+/*</Header>*/
+
+/*<Footer>*/
+.page-footer .page-footer-content {
+    width: 900px;
+    margin: 0 auto;
+}
+/*</Footer>*/
+
+
+
+
+
+
 .test {
     padding-left: 10px;
 }
