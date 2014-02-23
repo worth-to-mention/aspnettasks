@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data;
 using System.Data.SqlClient;
+using TestingSystem.Utils.Data;
 
 namespace TestingSystem.DataAccess
 {
@@ -116,10 +117,10 @@ namespace TestingSystem.DataAccess
         /// <param name="userID">User ID.</param>
         /// <param name="testID">Test ID</param>
         /// <returns>User testing results for the test in UserTestingResults</returns>
-        public UserTestingResults GetUserTestingResults(int userID, int testID)
+        public UserTestingResults GetUserTestingResults(object userID, int testID)
         {
             SqlCommand cmd = new SqlCommand("[dbo].[GetUserTestingResults]", connection);
-            cmd.Parameters.Add("@userID", SqlDbType.Int).Value = userID;
+            cmd.Parameters.Add("@userID", SqlDbType.UniqueIdentifier).Value = userID;
             cmd.Parameters.Add("@testID", SqlDbType.Int).Value = testID;
             cmd.CommandType = CommandType.StoredProcedure;
             SqlDataReader reader = cmd.ExecuteReader();
@@ -174,7 +175,7 @@ namespace TestingSystem.DataAccess
         /// <param name="testID">Test ID.</param>
         /// <param name="results">Testing results as a list of Pair(QuestionID, Passed/Failed) values.</param>
         /// <returns></returns>
-        public int SaveUserResults(int userID, int testID, List<Pair<int, bool>> results)
+        public int SaveUserResults(object userID, int testID, List<Pair<int, bool>> results)
         {
             if (results == null)
             {
@@ -195,7 +196,7 @@ namespace TestingSystem.DataAccess
             }
             SqlCommand cmd = new SqlCommand("[dbo].[SaveUserResults]", connection);
             cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.Add("@userID", SqlDbType.Int).Value = userID;
+            cmd.Parameters.Add("@userID", SqlDbType.UniqueIdentifier).Value = userID;
             cmd.Parameters.Add("@testID", SqlDbType.Int).Value = testID;
             cmd.Parameters.Add("@resultRows", SqlDbType.Structured).Value = resultsRow;
             return cmd.ExecuteNonQuery();

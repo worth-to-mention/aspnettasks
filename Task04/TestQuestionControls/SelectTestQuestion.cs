@@ -7,16 +7,20 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace TestQuestionControls
+namespace TestingSystem.Controls
 {
     /// <summary>
     /// Represents test question with multiplie selection
     /// possibility.
     /// </summary>
+    [
+        ParseChildren(true, "Options"),
+        ToolboxData("<{0}:SelectTestQuestion runat=\"server\"> </{0}:SelectTestQuestion>")
+    ]
     public class SelectTestQuestion : TestQuestion
     {
-        private readonly CheckBoxList optionsList;
-        private readonly List<string> answers;
+        private CheckBoxList optionsList;
+        private List<string> answers;
 
         /// <summary>
         /// Construct an instanse of SelectTestQuestion class.
@@ -27,13 +31,25 @@ namespace TestQuestionControls
             answers = new List<string>();
         }
         
+        public ListItemCollection Options
+        {
+            get
+            {
+                if (optionsList == null)
+                {
+                    optionsList = new CheckBoxList();
+                }
+                return optionsList.Items;
+            }
+        }
+
         /// <summary>
         /// Adds item to the checkbox list.
         /// </summary>
         /// <param name="item">Item to add to the checkbox list</param>
         public void AddItem(ListItem item)
         {
-            optionsList.Items.Add(item);
+            Options.Add(item);
         }
         /// <summary>
         /// Adds items to the checkbox list.

@@ -73,21 +73,13 @@ ul > li {
     overflow: hidden;
     border-bottom: 1px solid #222;
 }
-.page-content-border {
-    overflow: hidden;
-    background-color: #a4a4a4;
-    border: 4px dashed #494949;
-    padding: 5px;
-    border-radius: 5px;
-    width: 900px;
-    margin: 10px auto;
-}
+
 .page-content {
-    background-color: #a4a4a4;
     border-radius: 5px;
     color: #666;
     overflow: hidden;
-    margin: 10px;
+    width: 900px;
+    margin: 10px auto;
 }
 /*</Layout>*/
 
@@ -120,6 +112,45 @@ ul > li {
 }
 /*</Header>*/
 
+/*<Content>*/
+
+/*<ContentList>*/
+
+.content-list {
+    overflow:hidden;
+    border: 1px dashed rgba(164, 164, 164, 0.50);
+}
+
+.content-list-item {
+    overflow: hidden;
+    background-color: #a4a4a4;
+    border: 1px dashed rgba(73, 73, 73, 0.50);
+    padding: 10px;
+    border-radius: 5px;
+    margin: 0 20px 20px 20px;
+}
+.content-list-header {
+    margin-top: 0;    
+    margin-left: -1px;
+    margin-right: -1px;
+}
+.content-list-footer {   
+    margin-bottom: 0; 
+    margin-left: -1px;
+    margin-right: -1px;
+}
+.content-list-header:first-child {
+    margin-top: -1px;
+}
+.content-list-header:last-child {
+    margin-bottom: -1px;
+}
+
+/*</ContetList>*/
+
+
+/*</Content>*/
+
 /*<Footer>*/
 .page-footer .page-footer-content {
     width: 900px;
@@ -130,28 +161,76 @@ ul > li {
 
 
 
+/*<LoginBox>*/
+.loginbox {
+
+}
+.loginbox-signinButton {
+    width: 80px;
+    height: 30px;
+}
+.loginbox-username {
+
+}
+.loginbox-password {
+
+}
+.loginbox-validatorText {
+
+}
+.loginbox-titleText {
+
+}
+.loginbox-checkbox {
+
+}
+.loginbox-textbox {
+
+}
+.loginbox-hyperlink {
+
+}
+.loginbox-label {
+
+}
+/*</LoginBox>*/
 
 
+
+/*<Test>*/
 .test {
-    padding-left: 10px;
 }
 .test .test-header {
     margin-bottom: 10px;
+    display: block;
+    font-size: 18pt;
+    font-weight: 700;
 }
 .test .test-header a{
     display: block;
 }
-.test-content .test-testQuestion {
-    margin: 20px;
-    padding-left: 5px;
+.test-content .test-question {
+    padding: 10px;
 }
-.test-content .test-testQuestion > span {
+
+.test-question .test-question-title {
     display: block;
     margin-left: -5px;
     margin-bottom: 5px;
     font-weight: 700;
 }
-.test-content .test-submit {
-    width: 80px;
-    padding: 5px;
+.test .test-submit {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: -1px;
+    color: #444;
+    font-weight: 700;
+    background: linear-gradient(#b4b4b4 60%, rgba(180, 180, 180, 0.60));
+    
+    cursor: pointer;
 }
+.test .test-submit:hover {
+    background: linear-gradient(#bababa 60%, rgba(180, 180, 180, 0.60));
+}
+/*</Test>*/

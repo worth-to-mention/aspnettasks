@@ -7,7 +7,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace TestQuestionControls
+namespace TestingSystem.Controls
 {
     /// <summary>
     /// Base class for test questions. Contains only title
@@ -23,6 +23,9 @@ namespace TestQuestionControls
         public int QuestionId { get; set; }
 
         #region Control attributes
+
+        public string TitleCssClass { get; set; }
+
         /// <summary>
         /// Backing field for Title. 
         /// </summary>
@@ -42,6 +45,8 @@ namespace TestQuestionControls
             }
         }
 
+        public TestMode Mode { get; set; }
+
         #endregion
 
         /// <summary>
@@ -57,6 +62,10 @@ namespace TestQuestionControls
 
             titleLabel = new Label();
             titleLabel.Text = TestTitle;
+            if (!String.IsNullOrEmpty(TitleCssClass))
+            {
+                titleLabel.CssClass = TitleCssClass;
+            }
 
             Controls.Add(titleLabel);
         }

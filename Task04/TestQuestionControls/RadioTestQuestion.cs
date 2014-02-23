@@ -8,21 +8,29 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Drawing;
 
-namespace TestQuestionControls
+namespace TestingSystem.Controls
 {
     /// <summary>
     /// Represents test question with radio button options.
     /// </summary>
+    [
+        ParseChildren(true, "Options"),
+        ToolboxData("<{0}:RadioTestQuestion runat=\"server\"> </{0}:RadioTestQuestion>")
+    ]
     public class RadioTestQuestion : TestQuestion
     {
-        private readonly RadioButtonList optionsList;
+        private RadioButtonList optionsList;
 
-        /// <summary>
-        /// Constructs instance of RadioTestQuestion class.
-        /// </summary>
-        public RadioTestQuestion()
+        public ListItemCollection Options
         {
-            optionsList = new RadioButtonList();
+            get
+            {
+                if (optionsList == null)
+                {
+                    optionsList = new RadioButtonList();
+                }
+                return optionsList.Items;
+            }
         }
         /// <summary>
         /// Gets selected item from radio button list.
@@ -47,7 +55,7 @@ namespace TestQuestionControls
         /// <param name="item">Item to add to the radio button list.</param>
         public void AddItem(ListItem item)
         {
-            optionsList.Items.Add(item);
+            Options.Add(item);
         }
         /// <summary>
         /// Adds items to the radio button list.

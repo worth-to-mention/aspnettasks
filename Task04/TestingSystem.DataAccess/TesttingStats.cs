@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using TestingSystem.Utils.Data;
+
 namespace TestingSystem.DataAccess
 {
     public class TesttingStats

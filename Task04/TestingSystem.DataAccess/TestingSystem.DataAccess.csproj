@@ -42,7 +42,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Option.cs" />
-    <Compile Include="Pair.cs" />
     <Compile Include="Question.cs" />
     <Compile Include="SqlDataReaderExtentions.cs" />
     <Compile Include="Test.cs" />
@@ -50,6 +49,12 @@
     <Compile Include="TestingSystemDataContext.cs" />
     <Compile Include="TesttingStats.cs" />
     <Compile Include="UserTestingResults.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TestingSystem.Utils\TestingSystem.Utils.csproj">
+      <Project>{0b6784db-f5fa-4f2a-9f53-fb86c471c1b7}</Project>
+      <Name>TestingSystem.Utils</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

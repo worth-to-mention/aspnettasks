@@ -10,6 +10,8 @@ using System.Xml.Linq;
 using System.IO;
 using System.Xml.Schema;
 
+using TestingSystem.Utils.Visualization;
+
 namespace TestingSystem
 {
     public partial class Results : System.Web.UI.Page
@@ -41,9 +43,10 @@ namespace TestingSystem
 
         private void ShowNoDataMessage()
         {
-            Label noResults = new Label();
-            noResults.Text = "No data to display.";
-            ResultsContent.Controls.Add(noResults);
+            var div = new HtmlGenericControl("div");
+            div.Attributes["class"] = "content-list-item";
+            div.InnerText = "No data to display.";
+            ResultsContent.Controls.Add(div);
         }
 
         private void ShowResults(List<DataAccess.TesttingStats> stats)
@@ -52,11 +55,15 @@ namespace TestingSystem
             {
                 var data = new List<Tuple<double, string>>();
 
-                HtmlGenericControl paragraph = new HtmlGenericControl("p");
+                var header = new HtmlGenericControl("div");
+                header.Attributes["class"] = "content-list-item content-list-header";
 
                 var testTitleHeader = new HtmlGenericControl("h3");
                 testTitleHeader.InnerText = stat.TestTitle;
-                paragraph.Controls.Add(testTitleHeader);
+                header.Controls.Add(testTitleHeader);
+
+                var result = new HtmlGenericControl("div");
+                result.Attributes["class"] = "content-list-item";
 
                 foreach (var el in stat.AnsweringStat)
                 {
@@ -72,8 +79,9 @@ namespace TestingSystem
 
                 Image resultDiagram = new Image();
                 resultDiagram.ImageUrl = "data:image/png;base64," + Convert.ToBase64String(buffer);
-                paragraph.Controls.Add(resultDiagram);
-                ResultsContent.Controls.Add(paragraph);
+                result.Controls.Add(resultDiagram);
+                ResultsContent.Controls.Add(header);
+                ResultsContent.Controls.Add(result);
             }
         }
         private void ShowErrorPage()

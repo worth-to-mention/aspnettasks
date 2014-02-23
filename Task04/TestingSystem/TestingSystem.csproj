@@ -57,10 +57,12 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Administrative\CreateTest.aspx" />
     <Content Include="css\main.css" />
     <Content Include="Login.aspx" />
     <Content Include="Main.Master" />
     <Content Include="BasicLayout.master" />
+    <Content Include="Administrative\Web.config" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -78,6 +80,13 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Administrative\CreateTest.aspx.cs">
+      <DependentUpon>CreateTest.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Administrative\CreateTest.aspx.designer.cs">
+      <DependentUpon>CreateTest.aspx</DependentUpon>
+    </Compile>
     <Compile Include="BasicLayout.master.cs">
       <DependentUpon>BasicLayout.master</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -85,7 +94,6 @@
     <Compile Include="BasicLayout.master.designer.cs">
       <DependentUpon>BasicLayout.master</DependentUpon>
     </Compile>
-    <Compile Include="ChartGenerator.cs" />
     <Compile Include="Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -135,9 +143,13 @@
       <Project>{5c188a48-34b5-4453-985d-071fb5a7818a}</Project>
       <Name>TestingSystem.DataAccess</Name>
     </ProjectReference>
-    <ProjectReference Include="..\TestQuestionControls\TestQuestionControls.csproj">
+    <ProjectReference Include="..\TestingSystem.Utils\TestingSystem.Utils.csproj">
+      <Project>{0b6784db-f5fa-4f2a-9f53-fb86c471c1b7}</Project>
+      <Name>TestingSystem.Utils</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TestQuestionControls\TestingSystem.Controls.csproj">
       <Project>{858328d5-2ab4-4b2c-97ed-dd342228dd48}</Project>
-      <Name>TestQuestionControls</Name>
+      <Name>TestingSystem.Controls</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

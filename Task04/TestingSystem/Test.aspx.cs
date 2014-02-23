@@ -1,23 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
-using System.Web.UI.HtmlControls;
 using System.IO;
+using System.Linq;
+using System.Text;
+using System.Web;
+using System.Web.Security;
+using System.Web.UI;
+using System.Web.UI.HtmlControls;
+using System.Web.UI.WebControls;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.Schema;
-using System.Text;
 
-using TestQuestionControls;
+using TestingSystem.Controls;
+using TestingSystem.Utils.Data;
+using TestingSystem.Utils.Visualization;
 
 namespace TestingSystem
 {
     public partial class Test : System.Web.UI.Page
     {
-        private readonly List<TestQuestion> questions;
+        private TestControl testControl;
         private int testId;
         private bool firstTime
         {
@@ -34,7 +37,7 @@ namespace TestingSystem
 
         public Test()
         {
-            questions = new List<TestQuestion>();
+            testControl = new TestControl();
         }
 
         protected override void OnInit(EventArgs e)
@@ -58,16 +61,7 @@ namespace TestingSystem
             if (IsPostBack)
             {
                 Validate();
-                if (IsValid)
-                {
-                    if (firstTime || true)
-                    {
-                        SaveResults();
-                        firstTime = false;
-                    }
-                    ShowResults();
-                    TestContent.Visible = false;
-                }
+
             }                
         }
 
@@ -85,27 +79,30 @@ namespace TestingSystem
             string connectionString = conSettings.ConnectionStrings["TestingSystem"].ConnectionString;
 
             var userRes = new DataAccess.UserTestingResults();
-            string user = UserName.Text.Trim().ToLower();
+            MembershipUser user = Membership.GetUser();
                 
             using (var context = new DataAccess.TestingSystemDataContext(connectionString))
-            {
-                int userID = context.GetOrCreateUser(user);
-                userRes = context.GetUserTestingResults(userID, testId);
+            {                
+                userRes = context.GetUserTestingResults(user.ProviderUserKey, testId);
             }
             if (userRes == null)
             {
                 ShowErrorPage();
                 return;
             }
-            HtmlGenericControl paragraph = new HtmlGenericControl("p");
 
-            var resultText = new HtmlGenericControl("p");
+
+            var resultText = new HtmlGenericControl("div");
+            resultText.Attributes["class"] = "content-list-item content-list-header";
             resultText.InnerText = String.Format("{0}, you have gave the right answer for {1} of {2} questions."
-                , user
+                , user.UserName
                 , userRes.Passed
                 , userRes.Count
                 );
-            paragraph.Controls.Add(resultText);
+            ContentPlaceholder.Controls.Add(resultText);
+
+            HtmlGenericControl div = new HtmlGenericControl("div");
+            div.Attributes["class"] = "content-list-item";
 
             int failed = userRes.Count - userRes.Passed;
             var data = new List<Tuple<double, string>>();
@@ -116,9 +113,9 @@ namespace TestingSystem
 
             Image resultDiagram = new Image();
             resultDiagram.ImageUrl = "data:image/png;base64," + Convert.ToBase64String(buffer);
-            paragraph.Controls.Add(resultDiagram);
+            div.Controls.Add(resultDiagram);
 
-            TestPageContent.Controls.Add(paragraph);
+            ContentPlaceholder.Controls.Add(div);
         }
 
         private void SaveResults()
@@ -132,10 +129,10 @@ namespace TestingSystem
             }
             string connectionString = conSettings.ConnectionStrings["TestingSystem"].ConnectionString;   
             
-            var resultsData = new List<DataAccess.Pair<int, bool>>();
-            foreach (var testQuestion in questions)
+            var resultsData = new List<Pair<int, bool>>();
+            foreach (var testQuestion in testControl.Questions)
             {
-                var pair = new DataAccess.Pair<int, bool>
+                var pair = new Pair<int, bool>
                 {
                     First = testQuestion.QuestionId,
                     Second = testQuestion.CheckAnswer()
@@ -144,8 +141,7 @@ namespace TestingSystem
             }
             using (var context = new DataAccess.TestingSystemDataContext(connectionString))
             {
-                string user = UserName.Text.Trim().ToLower();
-                int userID = context.GetOrCreateUser(user);
+                object userID = Membership.GetUser().ProviderUserKey;
                 context.SaveUserResults(userID, testId, resultsData);
             }
         }
@@ -177,18 +173,48 @@ namespace TestingSystem
                 ShowErrorPage();
                 return;
             }
+            testControl = new TestControl();
+            testControl.Title = test.Title;
+            testControl.CssClass = "test";
+            testControl.TitleCssClass = "test-header content-list-item content-list-header";
+            testControl.TestContentCssClass = "test-content";
+            testControl.QuestionCssClass = "test-question content-list-item";
+            testControl.TestSubmitButtonCssClass = "test-submit content-list-item content-list-footer";
+            testControl.QuestionTitleCssClass = "test-question-title";
 
-            testHeader.Text = test.Title;
             foreach(var question in test.Questions)
             {
-                CreateQuestion(question);
+                testControl.AddQuestion(CreateQuestion(question));
             }
-            questions.ForEach(el => TestQuestions.Controls.Add(el));
+            testControl.SubmitButtonText = "Send";
+            testControl.Submit += testControl_Submit;
+
+            ContentPlaceholder.Controls.Add(testControl);
+        }
+
+        private void testControl_Submit(object sender, TestSubmitEventArgs e)
+        {
+            var usr = Membership.GetUser();
+            if (usr == null)
+            {
+                FormsAuthentication.RedirectToLoginPage();
+                return;
+            }
+            if (IsValid)
+            {
+                if (firstTime || true)
+                {
+                    SaveResults();
+                    firstTime = false;
+                }
+                ShowResults();
+                testControl.Visible = false;
+            }
         }
 
         private void ShowAvailableTests()
         {
-            TestPageContent.Controls.Clear();
+            ContentPlaceholder.Controls.Clear();
             var config = System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration("~/");
             var conSettings = config.ConnectionStrings;
             if (conSettings.ConnectionStrings.Count < 0)
@@ -197,11 +223,15 @@ namespace TestingSystem
                 return;
             }
             string connectionString = conSettings.ConnectionStrings["TestingSystem"].ConnectionString;
-            
+
+            var header = new HtmlGenericControl("div");
+            header.Attributes["class"] = "content-list-item content-list-header";
+
             var h2 = new HtmlGenericControl("h2");
             h2.InnerText = "Available tests:";
-
-            var ul = new HtmlGenericControl("ul");
+            header.Controls.Add(h2);
+            
+            ContentPlaceholder.Controls.Add(header);
 
             var tests = new List<DataAccess.Test>();
             using (var context = new DataAccess.TestingSystemDataContext(connectionString))
@@ -211,48 +241,45 @@ namespace TestingSystem
 
             foreach (var test in tests)
             {
-                var li = new HtmlGenericControl("li");
+                var content = new HtmlGenericControl("div");
+                content.Attributes["class"] = "content-list-item";
+
                 HyperLink a = new HyperLink();
                 a.Text = test.Title;
                 a.NavigateUrl = "/Test.aspx?id=" + test.TestID.ToString();
-                li.Controls.Add(a);
+                content.Controls.Add(a);
 
-                ul.Controls.Add(li);
+                ContentPlaceholder.Controls.Add(content);
             }
-            TestPageContent.Controls.Add(h2);
-            TestPageContent.Controls.Add(ul);
         }
 
-        private void CreateQuestion(DataAccess.Question question)
+        private TestQuestion CreateQuestion(DataAccess.Question question)
         {
             switch (question.Type)
             {
                 case TestingSystem.DataAccess.QuestionType.Radio:
-                    CreateRadioQuestion(question);
-                    break;
+                    return CreateRadioQuestion(question);
                 case TestingSystem.DataAccess.QuestionType.Select:
-                    CreateSelectQuestion(question);
-                    break;
+                    return CreateSelectQuestion(question);
                 case TestingSystem.DataAccess.QuestionType.Text:
-                    CreateTextQuestion(question);
-                    break;
+                    return CreateTextQuestion(question);
                 default:
                     ShowErrorPage();
-                    return;
+                    return null;
             }
         }
 
-        private void CreateTextQuestion(DataAccess.Question question)
+        private TextTestQuestion CreateTextQuestion(DataAccess.Question question)
         {
             TextTestQuestion textQuestion = new TextTestQuestion();
             textQuestion.CssClass = "test-testQuestion test-textTestQuestion";
             textQuestion.Title = question.Text;
             textQuestion.QuestionId = question.QuestionID;
             textQuestion.Answer = question.Options[0].Text;
-            questions.Add(textQuestion);
+            return textQuestion;
         }
 
-        private void CreateSelectQuestion(DataAccess.Question question)
+        private SelectTestQuestion CreateSelectQuestion(DataAccess.Question question)
         {
             SelectTestQuestion selectQuestion = new SelectTestQuestion();
             selectQuestion.CssClass = "test-testQuestion test-selectTestQuestion";
@@ -270,10 +297,10 @@ namespace TestingSystem
                     Value = option.OptionID.ToString()
                 };
             }));
-            questions.Add(selectQuestion);
+            return selectQuestion;
         }
 
-        private void CreateRadioQuestion(DataAccess.Question question)
+        private RadioTestQuestion CreateRadioQuestion(DataAccess.Question question)
         {
             RadioTestQuestion radioQuestion = new RadioTestQuestion();
             radioQuestion.CssClass = "test-testQuestion test-radioTestQuestion";
@@ -291,7 +318,7 @@ namespace TestingSystem
                     Value = option.OptionID.ToString()
                 };
             }));
-            questions.Add(radioQuestion);
+            return radioQuestion;
         }
     }
 }
