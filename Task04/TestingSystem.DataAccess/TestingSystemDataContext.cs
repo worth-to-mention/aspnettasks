@@ -220,6 +220,11 @@ namespace TestingSystem.DataAccess
             return (int)cmd.ExecuteScalar();
         }
 
+        public void CreateTest(Test test)
+        {
+
+        }
+
         #region IDisposable
 
         protected virtual void Dispose(bool disposing)

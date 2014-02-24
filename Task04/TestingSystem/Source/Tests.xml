@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Test xmlns="http://maleficus.com/Test">
+  <Title>Sample test</Title>
+  <Questions>
+    <Question type="Radio">
+      <Text>Sample radio question</Text>
+      <Options>
+        <Option isanswer="false">Wrong answer</Option>
+        <Option isanswer="true">Right answer</Option>
+      </Options>
+    </Question>
+    <Question type="Select">
+      <Text>Sample multiselect question</Text>
+      <Options>
+        <Option isanswer="false">Wrong answer</Option>
+        <Option isanswer="true">Right answer</Option>
+        <Option isanswer="true">Right answer</Option>
+      </Options>
+    </Question>
+    <Question type="Text">
+      <Text>Sample text question</Text>
+      <Options>
+        <Option isanswer="true">Answer</Option>
+      </Options>
+    </Question>
+  </Questions>
+</Test>

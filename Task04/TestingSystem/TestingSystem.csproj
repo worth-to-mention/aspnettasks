@@ -63,6 +63,7 @@
     <Content Include="Main.Master" />
     <Content Include="BasicLayout.master" />
     <Content Include="Administrative\Web.config" />
+    <None Include="Source\Tests.xsd" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -74,6 +75,7 @@
     <Content Include="Default.aspx" />
     <Content Include="Results.aspx" />
     <Content Include="Signup.aspx" />
+    <Content Include="Source\Tests.xml" />
     <Content Include="Test.aspx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

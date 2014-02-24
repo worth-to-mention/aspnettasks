@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://maleficus.com/Test"
+            xmlns="http://maleficus.com/Test"
+            elementFormDefault="qualified"
+            attributeFormDefault="unqualified"
+            >
+  <xsd:element name="Test" type="Test">
+  </xsd:element>  
+  <!-- Types-->
+  <!-- Test -->
+  <xsd:complexType name="Test">
+    <xsd:sequence>
+      <xsd:element name="Title" type="xsd:string"/>
+      <xsd:element name="Questions">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="Question" type="Question" minOccurs="0" maxOccurs="unbounded"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+  <!-- Question -->
+  <xsd:complexType name="Question">
+    <xsd:sequence>
+      <xsd:element name="Text" type="xsd:string"/>
+      <xsd:element name="Options" type="Options"/>
+    </xsd:sequence>
+    <xsd:attribute name="type" use="required">
+      <xsd:simpleType>
+        <xsd:restriction base="xsd:string">
+          <xsd:enumeration value="Radio" />
+          <xsd:enumeration value="Select" />
+          <xsd:enumeration value="Text" />
+        </xsd:restriction>
+      </xsd:simpleType>
+    </xsd:attribute>
+  </xsd:complexType>
+  <!-- Options -->
+  <xsd:complexType name="Options">
+    <xsd:sequence>
+      <xsd:element name="Option" type="Option" minOccurs="0" maxOccurs="unbounded"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  <!-- Option -->
+  <xsd:complexType name="Option">
+    <xsd:simpleContent>
+      <xsd:extension base="xsd:string">
+        <xsd:attribute name="isanswer" type="xsd:boolean" use="required" />
+      </xsd:extension>
+    </xsd:simpleContent>
+  </xsd:complexType>
+</xsd:schema>
