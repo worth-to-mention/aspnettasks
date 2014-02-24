@@ -29,8 +29,8 @@ namespace TestingSystem.Administrative
                 if (File.Exists(schemaPath))
                 {
                     XmlSchemaSet schemaSet = new XmlSchemaSet();
-                    schemaSet.Add(ns.ToString(), schemaPath);
-                    XDocument testDoc = XDocument.Load(TestXmlFileUpload.FileName);
+                    schemaSet.Add("http://maleficus.com/Test", schemaPath);
+                    XDocument testDoc = XDocument.Load(TestXmlFileUpload.FileContent);
                     bool error = false;
                     testDoc.Validate(schemaSet, (s, args) =>
                         {
@@ -38,9 +38,27 @@ namespace TestingSystem.Administrative
                         });
                     if (!error)
                     {
-                        SaveTest(testDoc);
+                        try
+                        {
+                            SaveTest(testDoc);
+                            UploadButtonLabel.Text = "Test has been successfully uploaded.";
+                        }
+                        catch(Exception)
+                        {
+                            UploadButtonLabel.Text = "File cannot be uploaded now, please try again later.";
+                        }
+                        
+                        
+                    }
+                    else
+                    {
+                        UploadButtonLabel.Text = "Your xml file has invalid content.";
                     }
                 }
+            }
+            else 
+            {
+                UploadButtonLabel.Text = "You must specify a xml file with test data.";
             }
             
         }
@@ -48,33 +66,30 @@ namespace TestingSystem.Administrative
         private void SaveTest(XDocument testDoc)
         {
             var query = 
-                from test in testDoc.Elements("Test")
-                select new DataAccess.Test
+                from question in testDoc.Root.Element(ns + "Questions").Elements(ns + "Question")
+                select new DataAccess.Question
                 {
-                    Title = (string)test.Element("Title"),
-                    Questions = (
-                        from question in test.Element("Questions").Elements("Question")
-                        select new DataAccess.Question
+                    Text = (string)question.Element(ns + "Text"),
+                    Type = (DataAccess.QuestionType)Enum.Parse(typeof(DataAccess.QuestionType), (string)question.Attribute("type")),
+                    Options = (
+                        from option in question.Element(ns + "Options").Elements(ns + "Option")
+                        select new DataAccess.Option
                         {
-                            Text = (string)question.Element("Text"),
-                            Type = (DataAccess.QuestionType)Enum.Parse(typeof(DataAccess.QuestionType), (string)question.Attribute("type")),
-                            Options = (
-                                from option in question.Element("Options").Elements("Option")
-                                select new DataAccess.Option
-                                {
-                                    Text = (string)option.Element("Text"),
-                                    IsAnswer = (bool)option.Attribute("isanswer")
-                                }
-                            ).ToList()
+                            Text = (string)option,
+                            IsAnswer = (bool)option.Attribute("isanswer")
                         }
                     ).ToList()
                 };
-            DataAccess.Test newTest = query.FirstOrDefault();
+            DataAccess.Test newTest = new DataAccess.Test
+            {
+                Title = (string)testDoc.Root.Element(ns + "Title"),
+                Questions = query.ToList()
+            };
             if (newTest != null)
             {
                 var config = System.Web.Configuration.WebConfigurationManager.OpenWebConfiguration("~/");
                 var conSettings = config.ConnectionStrings;
-                if (conSettings.ConnectionStrings.Count < 0)
+                if (conSettings.ConnectionStrings.Count > 0)
                 {
                     string connectionString = conSettings.ConnectionStrings["TestingSystem"].ConnectionString;
                 

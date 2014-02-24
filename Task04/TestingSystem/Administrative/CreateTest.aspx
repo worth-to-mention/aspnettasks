@@ -9,6 +9,7 @@
         <div class="content-list-item">
             <asp:FileUpload ID="TestXmlFileUpload" runat="server" />
             <asp:Button ID="UploadButton" runat="server" Text="Upload" OnClick="UploadButton_Click"/>
+            <asp:Label ID="UploadButtonLabel" runat="server" />
         </div>
     </div>
 </asp:Content>

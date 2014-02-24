@@ -1,6 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Test xmlns="http://maleficus.com/Test">
-  <Title>Sample test</Title>
+  <Titl>Sample test</Titl>
   <Questions>
     <Question type="Radio">
       <Text>Sample radio question</Text>

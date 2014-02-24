@@ -1,12 +1,11 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
             targetNamespace="http://maleficus.com/Test"
             xmlns="http://maleficus.com/Test"
             elementFormDefault="qualified"
             attributeFormDefault="unqualified"
             >
-  <xsd:element name="Test" type="Test">
-  </xsd:element>  
+  <xsd:element name="Test" type="Test" /> 
   <!-- Types-->
   <!-- Test -->
   <xsd:complexType name="Test">

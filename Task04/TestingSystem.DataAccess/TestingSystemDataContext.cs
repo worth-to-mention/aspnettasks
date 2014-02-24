@@ -222,7 +222,86 @@ namespace TestingSystem.DataAccess
 
         public void CreateTest(Test test)
         {
+            if (test == null)
+            {
+                throw new ArgumentNullException("test", "Missing object reference.");
+            }
+            //todo open transaction
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = connection;
+            cmd.CommandText = "[dbo].[CreateTest]";
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.Add("@testTitle", SqlDbType.NVarChar).Value = test.Title;
+            var param = new SqlParameter();
+            param.ParameterName = "@newTestID";
+            param.SqlDbType = SqlDbType.Int;
+            param.Direction = ParameterDirection.Output;
+            cmd.Parameters.Add(param);
+            cmd.ExecuteNonQuery();
+            int? testId = (int?)cmd.Parameters["@newTestID"].Value;
+            if (testId.HasValue)
+            {
+                cmd.CommandText = "SELECT QuestionTypeID, Name FROM [dbo].[QuestionTypes]";
+                cmd.CommandType = CommandType.Text;
+                SqlDataReader reader = cmd.ExecuteReader();
+                var query =
+                    from record in reader.AsEnumerable()
+                    select new 
+                    {
+                        ID = record.GetInt32(0),
+                        Name = record.GetString(1)
+                    };
+                var questionTypes = new Dictionary<string, int>();
+                foreach (var questionType in query)
+                {
+                    questionTypes.Add(questionType.Name, questionType.ID);
+                }
+                reader.Close();
+                cmd.CommandType = CommandType.StoredProcedure;
+                foreach(var question in test.Questions)
+                {
+                    cmd.CommandText = "[dbo].[CreateQuestionForTest]";
+                    cmd.Parameters.Clear();
+                    cmd.Parameters.Add("@testID", SqlDbType.Int).Value = testId.Value;
+                    cmd.Parameters.Add("@questionText", SqlDbType.NText).Value = question.Text;
+                    cmd.Parameters.Add("@questionTypeID", SqlDbType.Int).Value = questionTypes[question.Type.ToString()];
+                    param = new SqlParameter();
+                    param.ParameterName = "@newQuestionID";
+                    param.SqlDbType = SqlDbType.Int;
+                    param.Direction = ParameterDirection.Output;
+                    cmd.Parameters.Add(param);
+                    cmd.ExecuteNonQuery();
+                    int? questionID = (int?)cmd.Parameters["@newQuestionID"].Value;
+                    if (questionID.HasValue)
+                    {
+                        foreach(var option in question.Options)
+                        {
+                            cmd.CommandText = "[dbo].[CreateOptionForQuestion]";
+                            cmd.Parameters.Clear();
+                            cmd.Parameters.Add("@questionID", SqlDbType.Int).Value = questionID.Value;
+                            cmd.Parameters.Add("@optionText", SqlDbType.NText).Value = option.Text;
+                            cmd.Parameters.Add("@IsAnswer", SqlDbType.Bit).Value = option.IsAnswer;
+                            param = new SqlParameter();
+                            param.ParameterName = "@newOptionID";
+                            param.SqlDbType = SqlDbType.Int;
+                            param.Direction = ParameterDirection.Output;
+                            cmd.Parameters.Add(param);
+                            cmd.ExecuteNonQuery();
+                        }
 
+                    }
+                    else
+                    {
+                        //todo rollback and throw exception
+                    }
+
+
+                }
+            }
+            else
+            {
+                //todo rollback and throw exception
+            }
         }
 
         #region IDisposable
